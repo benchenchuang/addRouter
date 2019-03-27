@@ -3,6 +3,7 @@
         <div class="manage-side manage-bg-black">
             <div class="manage-side-scroll" >
                 <!-- 左侧导航区域 -->
+                1231321
                 <ul class="manage-nav manage-nav-tree">
                     <router-link v-for="(item, index) in navList" :key="index" tag="li" v-if="item.meta.nav" :to="item.path" class="manage-nav-item"  >
                         <a >{{item.name}}<span class="manage-nav-more"></span></a>
@@ -15,8 +16,9 @@
             </div>
         </div>
         <div>
-            This is Home Page
+            <img src="../assets/logo.png">
         </div>
+        <router-view></router-view>
     </div>
 </template>
 <script>

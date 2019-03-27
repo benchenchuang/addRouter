@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/index'
-const Login = r => require.ensure([], () => r(require('@/pages/Login')), 'Login')
-const Home = r => require.ensure([], () => r(require('@/pages/Home')), 'Home')
-const UserInfo = r => require.ensure([], () => r(require('@/pages/UserInfo')), 'UserInfo')
-const CompanyList = r => require.ensure([], () => r(require('@/pages/CompanyList')), 'CompanyList')
-const AddCompany = r => require.ensure([], () => r(require('@/pages/AddCompany')), 'AddCompany')
+const Login =() => import('@/pages/Login');
+const Home =() => import('@/pages/Home');
+const UserInfo =() => import('@/pages/UserInfo');
+const CompanyList =() => import('@/pages/CompanyList');
+const AddCompany =() => import('@/pages/AddCompany');
 
 Vue.use(Router)
 //公共页面
@@ -14,11 +14,6 @@ let routes = [
     path: '/login',
     name: 'Login',
     component: Login
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    component: Home
   }
 ];
 
@@ -27,26 +22,29 @@ export const asyncRouters = [
   {
     path: '/home',
     name: 'Home',
+    redirect: '/home/user_info',
     component: Home,
     meta: {role: ['0', '1'], nav: true},
-  },
-  {
-    path: '/user_info',
-    name: 'UserInfo',
-    component: UserInfo,
-    meta: {role: ['0', '1'], nav: true},
-  },
-  {
-    path: '/company_list',
-    name: 'CompanyList',
-    component: CompanyList,
-    meta: {role: ['0'], nav: true},
-  },
-  {
-    path: '/add_company',
-    name: 'AddCompany',
-    component: AddCompany,
-    meta: {role: ['1'], nav: true},
+    children:[
+      {
+        path: 'user_info',
+        name: 'UserInfo',
+        component: UserInfo,
+        meta: {role: ['0', '1'], nav: true},
+      },
+      {
+        path: 'company_list',
+        name: 'CompanyList',
+        component: CompanyList,
+        meta: {role: ['0'], nav: true},
+      },
+      {
+        path: 'add_company',
+        name: 'AddCompany',
+        component: AddCompany,
+        meta: {role: ['1'], nav: true},
+      }
+    ]
   }
 ]
 
@@ -55,20 +53,33 @@ let router = new Router({
   mode: 'history'
 })
 
+var infoLength = true;
 router.beforeEach((to, from, next) => {
   let info = store.state.userInfo;//获取用户信息
-  let infoLength = Object.keys(info).length;
+  // let infoLength = Object.keys(info).length===0;
   //在这里判断路由'/login'，防止进入死循环。未登录，status为1，跳到登录页面，已登录，status为0，继续访问页面
   if(infoLength && to.path!=='/login'){
-      if(info.role>=0){
-        store.dispatch('userLogin', info)//用户信息存入vuex
-        store.dispatch('permission', info.role).then(()=>{
-          router.addRoutes(store.state.navList);
-          next()
-        })
-      }else{
-        next('/login')
-      }
+    if(store.state.navList.length){
+      next()
+    }else{
+      store.dispatch('userLogin', info)//用户信息存入vuex
+      store.dispatch('permission', info.role).then(()=>{
+        router.addRoutes(store.state.navList);
+        // next()
+        next({ ...to, replace: true })
+      })
+    }
+      // if(info.role>=0){
+      //   store.dispatch('userLogin', info)//用户信息存入vuex
+      //   store.dispatch('permission', info.role).then(()=>{
+      //     router.addRoutes(store.state.navList);
+      //     next()
+      //     // next({ ...to, replace: true })
+      //   })
+      //   infoLength= false
+      // }else{
+      //   next('/login')
+      // }
   }else{
     next()
   }
