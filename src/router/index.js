@@ -53,21 +53,23 @@ let router = new Router({
   mode: 'history'
 })
 
-var infoLength = true;
+
 router.beforeEach((to, from, next) => {
   let info = store.state.userInfo;//获取用户信息
-  // let infoLength = Object.keys(info).length===0;
+  let infoLength = Object.keys(info).length===0;
   //在这里判断路由'/login'，防止进入死循环。未登录，status为1，跳到登录页面，已登录，status为0，继续访问页面
   if(infoLength && to.path!=='/login'){
-    if(store.state.navList.length){
-      next()
-    }else{
+    let info = JSON.parse(localStorage.getItem('info')) || ''
+    if(info.role >= 0){
       store.dispatch('userLogin', info)//用户信息存入vuex
       store.dispatch('permission', info.role).then(()=>{
+        console.log(store.state.navList)
         router.addRoutes(store.state.navList);
         // next()
         next({ ...to, replace: true })
       })
+    }else{
+      next('/login')
     }
       // if(info.role>=0){
       //   store.dispatch('userLogin', info)//用户信息存入vuex

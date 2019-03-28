@@ -32,8 +32,9 @@ export default {
     },
     methods: {
         submitForm(formName) {
-            store.dispatch('userLogin', this.ruleForm);
-            console.log(this.ruleForm)
+            // store.dispatch('userLogin', this.ruleForm);
+            let info=JSON.stringify(this.ruleForm)
+            localStorage.setItem('info',info)
             this.$router.push('/home')
             // this.$refs[formName].validate((valid) => {
             //     if (valid) {
