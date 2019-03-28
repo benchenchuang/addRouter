@@ -32,7 +32,7 @@ const store = new Vuex.Store({
 //根据权限筛选路由
 function filterAsyncRouter(asyncRouterMap,role){
     let accessedRouters = asyncRouterMap.filter(route => {
-        if (route.meta.role.join('').indexOf(role) >= 0) {
+        if (route.meta.role.indexOf(role) >= 0) {
           if (route.children && route.children.length) {
             route.children = filterAsyncRouter(route.children, role)
           }

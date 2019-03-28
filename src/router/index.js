@@ -24,7 +24,7 @@ export const asyncRouters = [
     name: 'Home',
     redirect: '/home/user_info',
     component: Home,
-    meta: {role: ['0', '1'], nav: true},
+    meta: {role: ['0','1'], nav: true},
     children:[
       {
         path: 'user_info',
@@ -62,7 +62,7 @@ router.beforeEach((to, from, next) => {
     let info = JSON.parse(localStorage.getItem('info')) || ''
     if(info.role >= 0){
       store.dispatch('userLogin', info)//用户信息存入vuex
-      store.dispatch('permission', info.role).then(()=>{
+      store.dispatch('permission', info.role+'').then(()=>{
         console.log(store.state.navList)
         router.addRoutes(store.state.navList);
         // next()
