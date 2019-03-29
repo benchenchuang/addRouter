@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="home_page">
         <div class="manage-side manage-bg-black">
             <div class="manage-side-scroll" >
                 <!-- 左侧导航区域 -->
@@ -18,7 +18,9 @@
         <div>
             <img src="../assets/logo.png">
         </div>
-        <router-view></router-view>
+        <transition name="fade">
+            <router-view class="animated" />
+        </transition>
     </div>
 </template>
 <script>
@@ -36,3 +38,22 @@ export default {
     }
 }
 </script>
+<style>
+/* 开始过渡阶段,动画出去阶段 */
+.fade-enter-active{
+    transition: all 1s ease-in .5s;
+}.fade-leave-active{
+  transition: all 1s ease-out;
+}
+/* 进入开始 */
+.fade-enter{
+  transform: translateY(-500px);
+  opacity: 0;
+}
+/* 出去终点 */
+.fade-leave-active{
+  transform: translateY(500px);
+  opacity: 0;
+}
+</style>
+
